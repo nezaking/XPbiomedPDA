@@ -1,0 +1,62 @@
+<!-- res/layout/activity_inbound.xml -->
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".InboundActivity">
+
+    <EditText
+        android:id="@+id/productionorderedittext"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="生产单号"/>
+
+    <EditText
+        android:id="@+id/barcodeedittext"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/productionorderedittext"
+        android:hint="条码"
+        android:focusable="true"
+        android:focusableInTouchMode="true"/>
+
+    <!-- 列表框和其他界面元素根据需要添加 -->
+
+    <ListView
+        android:id="@+id/listview"
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:layout_below="@id/barcodeedittext"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_alignParentBottom="true">
+
+        <TextView
+            android:id="@+id/currentquantitytextview"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:layout_weight="1"
+            android:layout_gravity="center"
+            android:text="当前数量"/>
+
+        <TextView
+            android:id="@+id/remainingquantitytextview"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:layout_weight="1"
+            android:layout_gravity="center"
+            android:text="余下数量"/>
+
+        <TextView
+            android:id="@+id/totalquantitytextview"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:layout_weight="1"
+            android:layout_gravity="center"
+            android:text="总计数量"/>
+    </LinearLayout>
+
+</RelativeLayout>
