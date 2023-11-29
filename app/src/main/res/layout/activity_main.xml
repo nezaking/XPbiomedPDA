@@ -3,133 +3,106 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     tools:context=".MainActivity">
 
     <!-- Top menu bar -->
     <LinearLayout
         android:id="@+id/topMenuBar"
         android:layout_width="match_parent"
-        android:layout_height="30dp"
-        android:background="@android:color/darker_gray"
-        android:orientation="horizontal">
+        android:layout_height="35dp"
+        android:background="@android:color/holo_blue_dark">
 
         <TextView
             android:id="@+id/tv_title"
-            android:text="@string/app_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textAlignment="center"
-            android:layout_weight="0.9"/>
+            android:layout_weight="0.9"
+            android:gravity="left"
+            android:text="@string/app_name"
+            android:textSize="25sp" />
         <!-- Settings button -->
         <ImageButton
             android:id="@+id/settingsButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="35dp"
+            android:layout_height="35dp"
             android:layout_weight="0.1"
-            android:contentDescription="Settings"
-            android:src="@android:drawable/ic_menu_preferences" />
+            android:background="@android:color/transparent"
+            android:scaleType="fitCenter"
+            android:src="@mipmap/set" />
 
         <!-- Add other menu items as needed -->
 
     </LinearLayout>
 
     <LinearLayout
+        android:id="@+id/bananer"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:gravity="top"
-        android:orientation="vertical"
-        android:padding="10dp">
+        android:layout_height="wrap_content"
+        android:layout_below="@id/topMenuBar"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"
+        android:orientation="horizontal">
 
-        <!-- Grid layout for the nine buttons -->
+        <TextView
+            android:id="@+id/title1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="出入库管理"
+            android:textSize="18sp" />
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="2dp" />
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/bananer"
+        android:layout_marginTop="3dp">
+
+        <!-- Grid layout for the three buttons -->
         <GridLayout
             android:id="@+id/gridLayout"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="100dp"
             android:layout_below="@+id/topMenuBar"
-            android:stretchMode="columnWidth"
-            android:layout_centerInParent="true"
             android:columnCount="3"
-            android:rowCount="3">
+            android:padding="2dp"
+            android:rowCount="1">
 
-            <Button
-                android:id="@+id/buttonInbound1"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_rowWeight="1"
+            <ImageButton
+                android:id="@+id/inBoundButton"
+                android:layout_width="120dp"
+                android:layout_height="match_parent"
                 android:layout_columnWeight="1"
-                android:background="@android:color/holo_blue_light"
-                android:text="入库" />
+                android:layout_gravity="center_horizontal"
+                android:scaleType="fitCenter"
+                android:src="@mipmap/in"></ImageButton>
 
-            <Button
-                android:id="@+id/buttonInbound2"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_rowWeight="1"
+            <ImageButton
+                android:id="@+id/outBoundButton"
+                android:layout_width="120dp"
+                android:layout_height="match_parent"
                 android:layout_columnWeight="1"
-                android:background="@android:color/holo_blue_light"
-                android:text="出库" />
+                android:layout_gravity="center_horizontal"
+                android:scaleType="fitCenter"
+                android:src="@mipmap/out"></ImageButton>
 
-            <Button
-                android:id="@+id/buttonInbound3"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_rowWeight="1"
+            <ImageButton
+                android:id="@+id/checkBoundButton"
+                android:layout_width="120dp"
+                android:layout_height="match_parent"
                 android:layout_columnWeight="1"
-                android:background="@android:color/holo_blue_light"
-                android:text="其他" />
-            <Button
-                android:id="@+id/buttonInbound4"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_rowWeight="1"
-                android:layout_columnWeight="1"
-                android:background="@android:color/holo_blue_light"
-                android:text="入库" />
-
-            <Button
-                android:id="@+id/buttonInbound5"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_rowWeight="1"
-                android:layout_columnWeight="1"
-                android:background="@android:color/holo_blue_light"
-                android:text="出库" />
-
-            <Button
-                android:id="@+id/buttonInbound6"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_rowWeight="1"
-                android:layout_columnWeight="1"
-                android:background="@android:color/holo_blue_light"
-                android:text="其他" />
-            <Button
-                android:id="@+id/buttonInbound7"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_rowWeight="1"
-                android:layout_columnWeight="1"
-                android:background="@android:color/holo_blue_light"
-                android:text="入库" />
-
-            <Button
-                android:id="@+id/buttonInbound8"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_rowWeight="1"
-                android:layout_columnWeight="1"
-                android:background="@android:color/holo_blue_light"
-                android:text="出库" />
-
-            <Button
-                android:id="@+id/buttonInbound9"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_rowWeight="1"
-                android:layout_columnWeight="1"
-                android:background="@android:color/holo_blue_light"
-                android:text="其他" />
+                android:layout_gravity="center_horizontal"
+                android:scaleType="fitCenter"
+                android:src="@mipmap/check"></ImageButton>
 
         </GridLayout>
     </LinearLayout>
+
+
 </RelativeLayout>

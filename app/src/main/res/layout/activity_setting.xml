@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="35dp"
+        android:layout_marginTop="2dp"
+        android:layout_marginBottom="10dp"
+        android:gravity="center"
+        android:padding="3dp"
+        android:text="设置"
+        android:textSize="22sp" />
+    <!-- 地址文本框 -->
+    <EditText
+        android:id="@+id/editTextAddress"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="地址: " />
+
+    <!-- 参数文本框 -->
+    <EditText
+        android:id="@+id/editTextParameters"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:hint="参数: " />
+
+    <!-- 自动上传时间文本框 -->
+    <EditText
+        android:id="@+id/editTextAutoUploadTime"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:hint="自动上传时间（分钟）: "
+        android:inputType="number" />
+
+    <!-- 保存按钮 -->
+    <Button
+        android:id="@+id/buttonSave"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:layout_gravity="center"
+        android:text="保存" />
+
+</LinearLayout>

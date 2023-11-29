@@ -24,7 +24,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
         // 入库按钮点击事件
-        Button buttonInbound = findViewById(R.id.buttonInbound1);
+        ImageButton buttonInbound = findViewById(R.id.inBoundButton);
         buttonInbound.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -33,8 +33,14 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        // 添加其他按钮的点击事件
-        // ...
+        // 出库按扭点击事件
+        ImageButton buttonOutbound =findViewById(R.id.outBoundButton);
+        buttonOutbound.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(MainActivity.this, OutboundActivity.class));
+            }
+        });
 
     }
 }
