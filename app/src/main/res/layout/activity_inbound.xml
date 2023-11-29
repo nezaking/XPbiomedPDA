@@ -4,11 +4,24 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".InboundActivity">
-
+<LinearLayout
+    android:id="@+id/inTop"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal" >
+    <TextView
+        android:text="扫描入库"
+        android:layout_width="match_parent"
+        android:layout_gravity="center_horizontal"
+        android:textSize="22sp"
+        android:background="@android:color/holo_blue_dark"
+        android:layout_height="40dp" />
+</LinearLayout>
     <EditText
         android:id="@+id/productionorderedittext"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_below="@id/inTop"
         android:hint="生产单号"/>
 
     <EditText

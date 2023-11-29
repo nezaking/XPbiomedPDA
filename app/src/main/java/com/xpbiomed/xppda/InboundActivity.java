@@ -24,5 +24,6 @@ public class InboundActivity extends AppCompatActivity {
         remainingQuantityTextView = findViewById(R.id.remainingquantitytextview);
         totalQuantityTextView = findViewById(R.id.totalquantitytextview);
         // Add your code to handle the Inbound activity
+        barcodeEditText.requestFocus();  //程序启动后，默认直接扫码
     }
 }
