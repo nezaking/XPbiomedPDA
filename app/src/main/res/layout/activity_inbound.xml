@@ -36,7 +36,7 @@
     <!-- 列表框和其他界面元素根据需要添加 -->
 
     <ListView
-        android:id="@+id/listview"
+        android:id="@+id/barCodeListView"
         android:layout_width="match_parent"
         android:layout_height="100dp"
         android:layout_below="@id/barcodeedittext"/>

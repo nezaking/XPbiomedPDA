@@ -69,7 +69,7 @@
         <GridLayout
             android:id="@+id/gridLayout"
             android:layout_width="match_parent"
-            android:layout_height="100dp"
+            android:layout_height="80dp"
             android:layout_below="@+id/topMenuBar"
             android:columnCount="3"
             android:padding="1dp"
@@ -77,7 +77,7 @@
 
             <ImageButton
                 android:id="@+id/inBoundButton"
-                android:layout_width="118dp"
+                android:layout_width="80dp"
                 android:layout_height="match_parent"
                 android:layout_columnWeight="1"
                 android:layout_gravity="center_horizontal"
@@ -86,7 +86,7 @@
 
             <ImageButton
                 android:id="@+id/outBoundButton"
-                android:layout_width="118dp"
+                android:layout_width="80dp"
                 android:layout_height="match_parent"
                 android:layout_columnWeight="1"
                 android:layout_gravity="center_horizontal"
@@ -95,7 +95,7 @@
 
             <ImageButton
                 android:id="@+id/checkBoundButton"
-                android:layout_width="118dp"
+                android:layout_width="80dp"
                 android:layout_height="match_parent"
                 android:layout_columnWeight="1"
                 android:layout_gravity="center_horizontal"

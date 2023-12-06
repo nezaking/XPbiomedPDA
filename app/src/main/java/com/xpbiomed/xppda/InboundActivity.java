@@ -7,7 +7,9 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.KeyEvent;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -24,6 +26,7 @@ import okhttp3.RequestBody;
 import okhttp3.Response;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -36,10 +39,15 @@ public class InboundActivity extends AppCompatActivity {
     private TextView currentQuantityTextView;
     private TextView remainingQuantityTextView;
     private TextView totalQuantityTextView;
+    private ListView barCodeListView;
+    private static String feishuAuthor="Bearer u-cNzTjAnkV4JpknpxpNn3q_ghkm9hh4VHO20050W0aKrl";
+    //添加数据适配器
+    private ArrayAdapter<String> adapter;
+    private List<String> barCodeList;
 
 
-    private static final String POST_URL = "https://open.feishu.cn/open-apis/bitable/v1/apps/I1RlbBcy8aJEjZsIdalckZFdnse/tables/tblIRpAqIbqfqOCs/records/batch_create";
-//    private static final Pattern PATTERN = Pattern.compile("([^#&=]+)=([^#&=]*)");
+    private static final String POST_URL = "https://open.feishu.cn/open-apis/bitable/v1/apps/I1RlbBcy8aJEjZsIdalckZFdnse/tables/tblIRpAqIbqfqOCs/records";
+    //    private static final Pattern PATTERN = Pattern.compile("([^#&=]+)=([^#&=]*)");
     private TextView textViewResult;
     private int count = 0;
 
@@ -47,42 +55,53 @@ public class InboundActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_inbound);
-
+        //控件注解
         productionOrderEditText = findViewById(R.id.productionorderedittext);
         barcodeEditText = findViewById(R.id.barcodeedittext);
         currentQuantityTextView = findViewById(R.id.currentquantitytextview);
         remainingQuantityTextView = findViewById(R.id.remainingquantitytextview);
         totalQuantityTextView = findViewById(R.id.totalquantitytextview);
+        barCodeListView = findViewById(R.id.barCodeListView);
+
+//        adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, barCodeList);
+        adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, barCodeList);
+        barCodeListView.setAdapter(adapter);
         // Add your code to handle the Inbound activity
         barcodeEditText.requestFocus();  //程序启动后，默认直接扫码
 
 
-        //添加文本框更变事件
-        barcodeEditText.addTextChangedListener(new TextWatcher() {
-
+        barcodeEditText.setOnKeyListener(new View.OnKeyListener() {
             @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+                if (event.getAction() == KeyEvent.ACTION_DOWN && keyCode == KeyEvent.KEYCODE_ENTER) {
+                    String barCode = barcodeEditText.getText().toString().trim();
+                    if (!barCode.isEmpty()) {
+                        barCodeList.add(parseUrl(barCode));
+                        adapter.notifyDataSetChanged();
+                        barcodeEditText.setText("");
 
-            }
+                        if (barCodeList.size() >= 10) {
+                            // 当行数超过10时，执行发送请求的操作
+                            Map<String, String> params = extractParams(barCode);
 
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                            // 构建 JSON 数据
+                            String json = buildJson(params);
 
-            }
+                            // 发送 POST 请求
+                            sendPostRequest(json);
+                        }
+                    }
+                    return true;
+                }
 
-            @Override
-            public void afterTextChanged(Editable s) {
-                        // 提取参数值
-        Map<String, String> params = extractParams(barcodeEditText.toString());
 
-        // 构建 JSON 数据
-        String json = buildJson(params);
-
-        // 发送 POST 请求
-        sendPostRequest(json);
+                return false;
             }
         });
+
+
     }
+//添加事件
 
     private static Map<String, String> extractParams(String input) {
         Map<String, String> paramMap = new HashMap<>();
@@ -120,32 +139,37 @@ public class InboundActivity extends AppCompatActivity {
     }
 
     private static void sendPostRequest(String json) {
-        OkHttpClient client = new OkHttpClient();
-
-        // 构建请求体
-        RequestBody requestBody = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), json);
-
-        // 构建请求
-        Request request = new Request.Builder()
-                .url("https://open.feishu.cn/open-apis/bitable/v1/apps/I1RlbBcy8aJEjZsIdalckZFdnse/tables/tblIRpAqIbqfqOCs/records/batch_create")
-                .post(requestBody)
-                .addHeader("Authorization", "Bearer u-e4usF5epNb8bLEypyBkOeqghk.Hhh4pFVy00glW0aGfh") // 替换为实际的 Authorization 头
-                .build();
-
-        // 发送请求
-        try {
-            Response response = client.newCall(request).execute();
-            if (response.isSuccessful()) {
-                System.out.println("POST请求成功，响应：" + response.body().string());
-            } else {
-                System.out.println("POST请求失败，响应码：" + response.code());
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        new PostRequestTask().execute(json);
     }
 
+    private static class PostRequestTask extends AsyncTask<String, Void, Void> {
+        @Override
+        protected Void doInBackground(String... params) {
+            OkHttpClient client = new OkHttpClient();
+            String json = params[0];
 
+            RequestBody requestBody = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), json);
+
+            Request request = new Request.Builder()
+                    .url(POST_URL)
+                    .post(requestBody)
+                    .addHeader("Authorization", feishuAuthor)
+                    .build();
+
+            try {
+                Response response = client.newCall(request).execute();
+                if (response.isSuccessful()) {
+//                    System.out.println();
+                } else {
+//                    System.out.println("POST请求失败，响应码：" + response.code());
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            return null;
+        }
+    }
 
 
     private void playNotificationSound() {
@@ -159,7 +183,15 @@ public class InboundActivity extends AppCompatActivity {
         count++;
         currentQuantityTextView.setText("当前数量: " + count);
     }
+
+    private static String parseUrl(String url) {
+        Pattern pattern = Pattern.compile("#(.*?)#");
+
+        //解析货号
+        return pattern.matcher(url).group(1);
+    }
 }
+
 
 
 
