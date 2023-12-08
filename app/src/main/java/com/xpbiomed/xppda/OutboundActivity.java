@@ -32,7 +32,7 @@ public class OutboundActivity extends AppCompatActivity {
     private TextView outremainingQuantityTextView;
     private TextView outtotalQuantityTextView;
     private ListView outListView;
-    private static String feishuAuthor = "Bearer u-cNzTjAnkV4JpknpxpNn3q_ghkm9hh4VHO20050W0aKrl";
+    private static String feishuAuthor = "Bearer u-eCGP_gsTd59r8AX7VEiu2AghkYHhh4VFiy001gW0aKfl";
     //添加数据适配器
     private ArrayAdapter<String> adapter;
     private List<String> barCodeList;

@@ -34,19 +34,20 @@ import java.util.regex.Pattern;
 import java.io.*;
 
 public class InboundActivity extends AppCompatActivity {
-
+    private static String user="张三";
     private EditText productionOrderEditText;
     private EditText barcodeEditText;
     private TextView currentQuantityTextView;
     private TextView remainingQuantityTextView;
     private TextView totalQuantityTextView;
     private ListView barCodeListView;
-    private static String feishuAuthor = "Bearer u-cNzTjAnkV4JpknpxpNn3q_ghkm9hh4VHO20050W0aKrl";
+    private static String feishuAuthor = "Bearer u-eCGP_gsTd59r8AX7VEiu2AghkYHhh4VFiy001gW0aKfl";
     //添加数据适配器
     private ArrayAdapter<String> adapter;
     private List<String> barCodeList;
 
 
+//    private static final String POST_URL = "https://open.feishu.cn/open-apis/bitable/v1/apps/I1RlbBcy8aJEjZsIdalckZFdnse/tables/tblIRpAqIbqfqOCs/records";
     private static final String POST_URL = "https://open.feishu.cn/open-apis/bitable/v1/apps/I1RlbBcy8aJEjZsIdalckZFdnse/tables/tblIRpAqIbqfqOCs/records";
     //    private static final Pattern PATTERN = Pattern.compile("([^#&=]+)=([^#&=]*)");
     private TextView textViewResult;
@@ -76,18 +77,19 @@ public class InboundActivity extends AppCompatActivity {
                 if (event.getAction() == KeyEvent.ACTION_DOWN && keyCode == KeyEvent.KEYCODE_ENTER) {
                     String barCode = barcodeEditText.getText().toString().trim();
 //                    Toast.makeText(InboundActivity.this,parseUrlModel(barCode),Toast.LENGTH_LONG).show();
+                    //添加货号到列表
                     if (!barCode.isEmpty()) {
                         barCodeList.add(parseUrlModel(barCode));
                         adapter.notifyDataSetChanged();
                         barcodeEditText.setText("");
 
-                        if (barCodeList.size() >= 10) {
+                        if (barCodeList.size() >= 3) {
                             // 当行数超过10时，执行发送请求的操作
-                            Map<String, String> params = extractParams(barCode);
+//                            Map<String, String> params = extractParams(barCode);
 
                             // 构建 JSON 数据
-                            String json = buildJson(params);
-
+                            String json = buildJson(barCode);
+                            Toast.makeText(InboundActivity.this,json,Toast.LENGTH_LONG).show();
                             // 发送 POST 请求
                             sendPostRequest(json);
                         }
@@ -104,35 +106,49 @@ public class InboundActivity extends AppCompatActivity {
     }
 //添加事件
 
-    private static Map<String, String> extractParams(String input) {
-        Map<String, String> paramMap = new HashMap<>();
+//    private static Map<String, String> extractParams(String input) {
+//        Map<String, String> paramMap = new HashMap<>();
+//
+//        // 匹配URL中的参数部分
+//        Pattern pattern = Pattern.compile("spm=(.*)&makeday(\\d+)&model(.+)&batch(.*)&sn(.*)"); // 匹配参数名和可能的值
+//        Matcher matcher = pattern.matcher(input);
+//
+//        // 提取参数名和参数值，并放入 paramMap 中
+//        while (matcher.find()) {
+//            String paramName = matcher.group(1);
+//            String paramValue = matcher.group(2) != null ? matcher.group(2) : ""; // 处理无赋值情况
+//            paramMap.put(paramName, paramValue);
+//        }
+//
+//        return paramMap;
+//    }
 
-        // 匹配URL中的参数部分
-        Pattern pattern = Pattern.compile("(\\w+)(?:=([^&]+))?"); // 匹配参数名和可能的值
-        Matcher matcher = pattern.matcher(input);
-
-        // 提取参数名和参数值，并放入 paramMap 中
-        while (matcher.find()) {
-            String paramName = matcher.group(1);
-            String paramValue = matcher.group(2) != null ? matcher.group(2) : ""; // 处理无赋值情况
-            paramMap.put(paramName, paramValue);
+    private static String buildJson(String url) {
+        // 将url转为json格式
+        Pattern pattern = Pattern.compile("spm=(.*?)&makeday(.*?)&model(.*?)&batch(.*?)&sn(.*)"); // 匹配参数名和可能的值
+        Matcher matcher = pattern.matcher(url);
+        String uniquecode="无";
+        String makeday="无";
+        String model="无";
+        String batch="无";
+        String sn="无";
+        if (matcher.find()){
+            uniquecode=matcher.group(1);
+            makeday=matcher.group(2);
+            model=matcher.group(3);
+            batch=matcher.group(4);
+            sn=matcher.group(5);
         }
-
-        return paramMap;
-    }
-
-    private static String buildJson(Map<String, String> params) {
-        // 构建 JSON 数据
         return "{\n" +
                 "  \"records\": [\n" +
                 "    {\n" +
                 "      \"fields\": {\n" +
-                "        \"货号\": \"" + params.get("model") + "\",\n" +
-                "        \"批次\": \"" + params.get("batch") + "\",\n" +
-                "        \"序列号\": \"" + params.get("sn") + "\",\n" +
-                "        \"生产日期\": \"" + params.get("makeday") + "\",\n" +
-                "        \"操作人员\": \"张三\",\n" +
-                "        \"唯一码\": \"" + params.get("spm") + "\"\n" +
+                "        \"货号\": \"" + model + "\",\n" +
+                "        \"批次\": \"" + batch + "\",\n" +
+                "        \"序列号\": \"" + sn + "\",\n" +
+                "        \"生产日期\": \"" + makeday + "\",\n" +
+                "        \"操作人员\": \"" + user + "\",\n" +
+                "        \"唯一码\": \"" + uniquecode + "\"\n" +
                 "      }\n" +
                 "    }\n" +
                 "  ]\n" +
