@@ -25,6 +25,7 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -40,7 +41,7 @@ public class InboundActivity extends AppCompatActivity {
     private TextView remainingQuantityTextView;
     private TextView totalQuantityTextView;
     private ListView barCodeListView;
-    private static String feishuAuthor="Bearer u-cNzTjAnkV4JpknpxpNn3q_ghkm9hh4VHO20050W0aKrl";
+    private static String feishuAuthor = "Bearer u-cNzTjAnkV4JpknpxpNn3q_ghkm9hh4VHO20050W0aKrl";
     //添加数据适配器
     private ArrayAdapter<String> adapter;
     private List<String> barCodeList;
@@ -62,21 +63,21 @@ public class InboundActivity extends AppCompatActivity {
         remainingQuantityTextView = findViewById(R.id.remainingquantitytextview);
         totalQuantityTextView = findViewById(R.id.totalquantitytextview);
         barCodeListView = findViewById(R.id.barCodeListView);
+        barCodeList = new ArrayList<>();
 
 //        adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, barCodeList);
         adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, barCodeList);
         barCodeListView.setAdapter(adapter);
         // Add your code to handle the Inbound activity
         barcodeEditText.requestFocus();  //程序启动后，默认直接扫码
-
-
         barcodeEditText.setOnKeyListener(new View.OnKeyListener() {
             @Override
             public boolean onKey(View v, int keyCode, KeyEvent event) {
                 if (event.getAction() == KeyEvent.ACTION_DOWN && keyCode == KeyEvent.KEYCODE_ENTER) {
                     String barCode = barcodeEditText.getText().toString().trim();
+//                    Toast.makeText(InboundActivity.this,parseUrlModel(barCode),Toast.LENGTH_LONG).show();
                     if (!barCode.isEmpty()) {
-                        barCodeList.add(parseUrl(barCode));
+                        barCodeList.add(parseUrlModel(barCode));
                         adapter.notifyDataSetChanged();
                         barcodeEditText.setText("");
 
@@ -184,11 +185,12 @@ public class InboundActivity extends AppCompatActivity {
         currentQuantityTextView.setText("当前数量: " + count);
     }
 
-    private static String parseUrl(String url) {
-        Pattern pattern = Pattern.compile("#(.*?)#");
+//    http://www.xpbiomed.com/productinfo/1396386.html#C3580-0500-2349389-05122025#spm=Ta760724US&makeday1701423233&modelC3580-0500&batch2349389&snXP1999
+    private static String parseUrlModel(String url) {
+//        Pattern pattern=Pattern.compile("model(\\w.+)&batch");
+        return  url.substring(115,125);
 
-        //解析货号
-        return pattern.matcher(url).group(1);
+
     }
 }
 
