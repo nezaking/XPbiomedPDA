@@ -1,4 +1,5 @@
 package com.xpbiomed.xppda;
+
 import android.media.MediaPlayer;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -8,6 +9,7 @@ import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
+
 import androidx.appcompat.app.AppCompatActivity;
 
 import java.io.IOException;
@@ -15,8 +17,16 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import android.util.Log;
+import android.widget.Toast;
+
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
@@ -32,10 +42,14 @@ public class OutboundActivity extends AppCompatActivity {
     private TextView outremainingQuantityTextView;
     private TextView outtotalQuantityTextView;
     private ListView outListView;
-    private static String feishuAuthor = "Bearer u-eCGP_gsTd59r8AX7VEiu2AghkYHhh4VFiy001gW0aKfl";
+    private static String feishuAuthor = "Bearer u-fy8cTYC.JeRXBIecRuKt6TghkmHhh4rxUO00h1.0aLe4";
+    private static String operator = "张三";
     //添加数据适配器
     private ArrayAdapter<String> adapter;
     private List<String> barCodeList;
+    private static List<String> barUrlList; //完整的URL列表
+    public Integer listCount;
+    public static String saleno;
 
 
     private static final String POST_URL = "https://open.feishu.cn/open-apis/bitable/v1/apps/I1RlbBcy8aJEjZsIdalckZFdnse/tables/tblIRpAqIbqfqOCs/records";
@@ -48,6 +62,7 @@ public class OutboundActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_outbound);
         //控件注解
+        //控件注解
         salesOrderedittext = findViewById(R.id.salesorderedittext);
         outbarcodeEditText = findViewById(R.id.outbarcodeedittext);
         outcurrentQuantityTextView = findViewById(R.id.outcurrentquantitytextview);
@@ -55,114 +70,138 @@ public class OutboundActivity extends AppCompatActivity {
         outtotalQuantityTextView = findViewById(R.id.outtotalquantitytextview);
         outListView = findViewById(R.id.outlistview);
         barCodeList = new ArrayList<>();
+        barUrlList = new ArrayList<>();
 
 //        adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, barCodeList);
         adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, barCodeList);
-        outListView.setAdapter(adapter);
         // Add your code to handle the Inbound activity
-        outbarcodeEditText.requestFocus();  //程序启动后，默认直接扫码
-        outbarcodeEditText.setOnKeyListener(new View.OnKeyListener() {
+        salesOrderedittext.requestFocus();  //程序启动后，默认直接定位到销售订单
+
+        salesOrderedittext.setOnKeyListener(new View.OnKeyListener() {
             @Override
             public boolean onKey(View v, int keyCode, KeyEvent event) {
                 if (event.getAction() == KeyEvent.ACTION_DOWN && keyCode == KeyEvent.KEYCODE_ENTER) {
-                    String barCode = outbarcodeEditText.getText().toString().trim();
-//                    Toast.makeText(InboundActivity.this,parseUrlModel(barCode),Toast.LENGTH_LONG).show();
-                    if (!barCode.isEmpty()) {
-                        barCodeList.add(parseUrlModel(barCode));
-                        adapter.notifyDataSetChanged();
-                        outbarcodeEditText.setText("");
+                    if (!salesOrderedittext.getText().toString().isEmpty()) {
+                        saleno = salesOrderedittext.getText().toString().trim(); //赋值
+//                        Toast.makeText(OutboundActivity.this,saleno,Toast.LENGTH_LONG).show();
 
-                        if (barCodeList.size() >= 10) {
-                            // 当行数超过10时，执行发送请求的操作
-                            Map<String, String> params = extractParams(barCode);
-
-                            // 构建 JSON 数据
-                            String json = buildJson(params);
-
-                            // 发送 POST 请求
-                            sendPostRequest(json);
-                        }
                     }
                     return true;
                 }
-
 
                 return false;
             }
         });
 
-
-    }
-//添加事件
-
-    private static Map<String, String> extractParams(String input) {
-        Map<String, String> paramMap = new HashMap<>();
-
-        // 匹配URL中的参数部分
-        Pattern pattern = Pattern.compile("(\\w+)(?:=([^&]+))?"); // 匹配参数名和可能的值
-        Matcher matcher = pattern.matcher(input);
-
-        // 提取参数名和参数值，并放入 paramMap 中
-        while (matcher.find()) {
-            String paramName = matcher.group(1);
-            String paramValue = matcher.group(2) != null ? matcher.group(2) : ""; // 处理无赋值情况
-            paramMap.put(paramName, paramValue);
-        }
-
-        return paramMap;
-    }
-
-    private static String buildJson(Map<String, String> params) {
-        // 构建 JSON 数据
-        return "{\n" +
-                "  \"records\": [\n" +
-                "    {\n" +
-                "      \"fields\": {\n" +
-                "        \"货号\": \"" + params.get("model") + "\",\n" +
-                "        \"批次\": \"" + params.get("batch") + "\",\n" +
-                "        \"序列号\": \"" + params.get("sn") + "\",\n" +
-                "        \"生产日期\": \"" + params.get("makeday") + "\",\n" +
-                "        \"操作人员\": \"张三\",\n" +
-                "        \"唯一码\": \"" + params.get("spm") + "\"\n" +
-                "      }\n" +
-                "    }\n" +
-                "  ]\n" +
-                "}";
-    }
-
-    private static void sendPostRequest(String json) {
-        new OutboundActivity.PostRequestTask().execute(json);
-    }
-
-    private static class PostRequestTask extends AsyncTask<String, Void, Void> {
-        @Override
-        protected Void doInBackground(String... params) {
-            OkHttpClient client = new OkHttpClient();
-            String json = params[0];
-
-            RequestBody requestBody = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), json);
-
-            Request request = new Request.Builder()
-                    .url(POST_URL)
-                    .post(requestBody)
-                    .addHeader("Authorization", feishuAuthor)
-                    .build();
-
-            try {
-                Response response = client.newCall(request).execute();
-                if (response.isSuccessful()) {
-//                    System.out.println();
-                } else {
-//                    System.out.println("POST请求失败，响应码：" + response.code());
+        outbarcodeEditText.setOnKeyListener(new View.OnKeyListener() {
+            @Override
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+                if (event.getAction() == KeyEvent.ACTION_DOWN && keyCode == KeyEvent.KEYCODE_ENTER)
+                {
+//                    Toast.makeText(OutboundActivity.this,outbarcodeEditText.getText().toString(),Toast.LENGTH_LONG).show();
+                    String barCode=outbarcodeEditText.getText().toString();
+                    barCodeList.add(barCode);
+                    barUrlList.add(barCode);
+                    adapter.notifyDataSetChanged(); //触发事件
+                    listCount++; //纪录自增
+                    if (listCount==5){
+                        new UploadDataTask().execute(barUrlList); //超过五条就自动提交
+                        listCount=0; //清零
+                        return true;
+                    }
                 }
-            } catch (IOException e) {
-                e.printStackTrace();
+                return false;
             }
-
-            return null;
-        }
+        });
     }
 
+    @Override
+    protected void onPause() {
+        super.onPause();
+        new UploadDataTask().execute(barUrlList); //每10条提交一次，如果最后一次不足10条，直接退出即可
+    }
+
+    private static class UploadDataTask extends AsyncTask<List<String>, Void, Boolean> {
+        public boolean status = true; //异步不能直接处理UI，所有要定义状态
+
+        @Override
+        protected Boolean doInBackground(List<String>... params) {
+            List<String> barCodes = params[0];
+            try {
+                // 构建 JSON 数据
+                JSONArray recordsArray = new JSONArray();
+                for (String barCode : barCodes) {
+                    JSONObject fieldsObject = parseBarCode(barCode);
+                    Log.d("parserA", fieldsObject.toString());
+                    JSONObject recordObject = new JSONObject();
+                    recordObject.put("fields", fieldsObject);
+                    Log.d("parserB", fieldsObject.toString());
+                    recordsArray.put(recordObject);
+                }
+
+                JSONObject requestBody = new JSONObject();
+                Log.d("parserC", recordsArray.toString());
+                requestBody.put("records", recordsArray);
+                Log.d("parserD", requestBody.toString());
+                // 发送 POST 请求
+                OkHttpClient client = new OkHttpClient();
+                RequestBody body = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), requestBody.toString());
+                Request request = new Request.Builder()
+                        .url(POST_URL)
+                        .addHeader("Authorization", feishuAuthor)
+                        .post(body)
+                        .build();
+
+                Response response = client.newCall(request).execute();
+                Log.d("parserD", recordsArray.toString());
+                return response.isSuccessful() && parseResponse(response.body().string());
+            } catch (Exception e) {
+                e.printStackTrace();
+                return false;
+            }
+        }
+
+        @Override
+        protected void onPostExecute(Boolean success) {
+            if (success) {
+                status = true;
+                barUrlList.clear(); //清空列表
+            } else {
+                status = false;
+            }
+        }
+
+        //解析条码
+        protected JSONObject parseBarCode(String barCode) throws JSONException {
+            //提取URL里面的字段
+            Pattern pattern = Pattern.compile("spm=(.*)&makeday(.*)&model(.+)&batch(.*)&sn(.*)"); // 匹配参数名和可能的值
+            Matcher matcher = pattern.matcher(barCode);
+            String uniquecode = null, model = null, makeday = null, batch = null, sn = null;
+            //正则表达式
+            if (matcher.find()) {
+                uniquecode = matcher.group(1);
+                makeday = matcher.group(2);
+                model = matcher.group(3);
+                batch = matcher.group(4);
+                sn = matcher.group(5);
+            }
+            JSONObject fieldsObject = new JSONObject();
+            fieldsObject.put("销售单号", saleno);
+            fieldsObject.put("货号", model);
+            fieldsObject.put("批次", batch);
+            fieldsObject.put("序列号", sn);
+            fieldsObject.put("生产日期", makeday);
+            fieldsObject.put("唯一码", uniquecode);
+            fieldsObject.put("操作人员", operator);
+            return fieldsObject;
+        }
+
+        //解析返回结果
+        private boolean parseResponse(String response) throws JSONException {
+            JSONObject jsonResponse = new JSONObject(response);
+            return jsonResponse.optInt("code") == 0;
+        }
+    }
 
     private void playNotificationSound() {
         // 播放提示音，这里使用默认提示音
@@ -170,17 +209,22 @@ public class OutboundActivity extends AppCompatActivity {
         mediaPlayer.start();
     }
 
-    private void updateTextViewResult() {
+    private void updateTextViewResult(Integer count) {
         // 更新底部的 TextView 中的数字
-        count++;
         outcurrentQuantityTextView.setText("当前数量: " + count);
     }
 
-    //    http://www.xpbiomed.com/productinfo/1396386.html#C3580-0500-2349389-05122025#spm=Ta760724US&makeday1701423233&modelC3580-0500&batch2349389&snXP1999
+
     private static String parseUrlModel(String url) {
 //        Pattern pattern=Pattern.compile("model(\\w.+)&batch");
-        return  url.substring(115,125);
+        return url.substring(115, 125);
 
 
     }
 }
+
+
+
+
+
+

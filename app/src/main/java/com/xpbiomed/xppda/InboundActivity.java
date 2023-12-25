@@ -48,6 +48,7 @@ public class InboundActivity extends AppCompatActivity {
     private List<String> barCodeList;
     private static List<String> barUrlList; //完整的URL列表
     Integer listCount = 0;
+    private static String prono; //生产单号
 
 
     //    private static final String POST_URL = "https://open.feishu.cn/open-apis/bitable/v1/apps/I1RlbBcy8aJEjZsIdalckZFdnse/tables/tblIRpAqIbqfqOCs/records";
@@ -105,9 +106,29 @@ public class InboundActivity extends AppCompatActivity {
             }
         });
 
+        //设置上面扫描生产单号的点击事件
+        productionOrderEditText.setOnKeyListener(new View.OnKeyListener() {
+            @Override
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+
+
+                if (event.getAction() == KeyEvent.ACTION_DOWN && keyCode == KeyEvent.KEYCODE_ENTER) {
+                    String proOrderNo = productionOrderEditText.getText().toString().trim();
+                    if (!proOrderNo.isEmpty()) {
+                        prono = proOrderNo;   //添加生产单号
+                    }
+                }
+                return false;
+            }
+        });
+
 
     }
 
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+    }
 
     //新代码
     private static class UploadDataTask extends AsyncTask<List<String>, Void, Boolean> {
@@ -175,6 +196,7 @@ public class InboundActivity extends AppCompatActivity {
                 sn = matcher.group(5);
             }
             JSONObject fieldsObject = new JSONObject();
+            fieldsObject.put("生产单号", prono);
             fieldsObject.put("货号", model);
             fieldsObject.put("批次", batch);
             fieldsObject.put("序列号", sn);

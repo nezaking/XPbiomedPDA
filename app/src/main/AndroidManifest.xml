@@ -26,7 +26,7 @@
             android:name=".MainAppliction"
             android:exported="false" />
         <activity
-            android:name=".InboundActivity"
+            android:name=".OutboundActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -36,7 +36,7 @@
         </activity>
         <activity android:name=".MainActivity" />
         <activity android:name=".LoginActivity" />
-        <activity android:name=".OutboundActivity" />
+        <activity android:name=".InboundActivity" />
     </application>
 
 </manifest>
