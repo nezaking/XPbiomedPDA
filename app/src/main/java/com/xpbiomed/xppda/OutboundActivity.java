@@ -21,6 +21,8 @@ import java.util.Map;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.xpbiomed.xppda.model.Feishu;
+
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -42,17 +44,17 @@ public class OutboundActivity extends AppCompatActivity {
     private TextView outremainingQuantityTextView;
     private TextView outtotalQuantityTextView;
     private ListView outListView;
-    private static String feishuAuthor = "Bearer u-fy8cTYC.JeRXBIecRuKt6TghkmHhh4rxUO00h1.0aLe4";
+    private static String feishuAuthor = "Bearer "+ Feishu.feishuAccessToken;
     private static String operator = "张三";
     //添加数据适配器
     private ArrayAdapter<String> adapter;
     private List<String> barCodeList;
     private static List<String> barUrlList; //完整的URL列表
-    public Integer listCount;
+    public Integer listCount=0;
     public static String saleno;
 
 
-    private static final String POST_URL = "https://open.feishu.cn/open-apis/bitable/v1/apps/I1RlbBcy8aJEjZsIdalckZFdnse/tables/tblIRpAqIbqfqOCs/records";
+    private static final String POST_URL = "https://open.feishu.cn/open-apis/bitable/v1/apps/I1RlbBcy8aJEjZsIdalckZFdnse/tables/tblvYiMztQIDUZpZ/records/batch_create";
     //    private static final Pattern PATTERN = Pattern.compile("([^#&=]+)=([^#&=]*)");
     private TextView textViewResult;
     private int count = 0;
@@ -74,6 +76,7 @@ public class OutboundActivity extends AppCompatActivity {
 
 //        adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, barCodeList);
         adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, barCodeList);
+        outListView.setAdapter(adapter); //将list视图和barcodelist绑定
         // Add your code to handle the Inbound activity
         salesOrderedittext.requestFocus();  //程序启动后，默认直接定位到销售订单
 
@@ -84,7 +87,8 @@ public class OutboundActivity extends AppCompatActivity {
                     if (!salesOrderedittext.getText().toString().isEmpty()) {
                         saleno = salesOrderedittext.getText().toString().trim(); //赋值
 //                        Toast.makeText(OutboundActivity.this,saleno,Toast.LENGTH_LONG).show();
-
+                        outbarcodeEditText.requestFocus();//自动跳转到扫描序列号
+                        Log.d("FeishuTokenO", Feishu.feishuAccessToken);
                     }
                     return true;
                 }
@@ -96,19 +100,22 @@ public class OutboundActivity extends AppCompatActivity {
         outbarcodeEditText.setOnKeyListener(new View.OnKeyListener() {
             @Override
             public boolean onKey(View v, int keyCode, KeyEvent event) {
-                if (event.getAction() == KeyEvent.ACTION_DOWN && keyCode == KeyEvent.KEYCODE_ENTER)
-                {
+                if (event.getAction() == KeyEvent.ACTION_DOWN && keyCode == KeyEvent.KEYCODE_ENTER) {
 //                    Toast.makeText(OutboundActivity.this,outbarcodeEditText.getText().toString(),Toast.LENGTH_LONG).show();
-                    String barCode=outbarcodeEditText.getText().toString();
-                    barCodeList.add(barCode);
-                    barUrlList.add(barCode);
+                    String barCode = outbarcodeEditText.getText().toString();
+
+                    barCodeList.add(parseUrlModel(barCode)); //提取货号，添加到listview中
                     adapter.notifyDataSetChanged(); //触发事件
+                    barUrlList.add(barCode);
+                    updateTextViewResult(barCodeList.size()); //下面数量添加
+                    outbarcodeEditText.setText("");//扫描完清空文本框
                     listCount++; //纪录自增
                     if (listCount==5){
                         new UploadDataTask().execute(barUrlList); //超过五条就自动提交
                         listCount=0; //清零
-                        return true;
+                        Log.d("feishuAuthor", feishuAuthor);
                     }
+                    return true;
                 }
                 return false;
             }
@@ -119,6 +126,11 @@ public class OutboundActivity extends AppCompatActivity {
     protected void onPause() {
         super.onPause();
         new UploadDataTask().execute(barUrlList); //每10条提交一次，如果最后一次不足10条，直接退出即可
+        try {
+            Feishu.requestAccessToken(); //Token两个小时一更新，退出时刷新Token
+        } catch (JSONException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     private static class UploadDataTask extends AsyncTask<List<String>, Void, Boolean> {

@@ -41,9 +41,9 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/topMenuBar"
         android:layout_marginTop="10dp"
-        android:layout_marginBottom="10dp"
-        android:padding="5dp"
-        android:orientation="horizontal">
+        android:layout_marginBottom="3dp"
+        android:orientation="horizontal"
+        android:padding="5dp">
 
         <TextView
             android:id="@+id/title1"
@@ -51,59 +51,114 @@
             android:layout_height="30dp"
             android:gravity="center"
             android:text="出入库管理"
-            android:textSize="18sp" />
+            android:textSize="24sp" />
 
-        <Space
-            android:layout_width="match_parent"
-            android:layout_height="2dp" />
+
     </LinearLayout>
 
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:layout_below="@+id/bananer"
+        android:layout_marginBottom="15dp"
+        android:background="@color/colorBlack" />
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="120dp"
         android:layout_below="@id/bananer"
-        android:layout_marginTop="3dp">
+        android:layout_marginTop="20dp">
 
-        <!-- Grid layout for the three buttons -->
-        <GridLayout
-            android:id="@+id/gridLayout"
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="3"
+        android:orientation="vertical">
+
+        <ImageButton
+            android:id="@+id/inBoundButton"
             android:layout_width="match_parent"
-            android:layout_height="80dp"
-            android:layout_below="@+id/topMenuBar"
-            android:columnCount="3"
-            android:padding="1dp"
-            android:rowCount="1">
+            android:layout_height="75dp"
+            android:background="@android:color/transparent"
+            android:scaleType="fitCenter"
+            android:src="@mipmap/in"></ImageButton>
 
-            <ImageButton
-                android:id="@+id/inBoundButton"
-                android:layout_width="80dp"
-                android:layout_height="match_parent"
-                android:layout_columnWeight="1"
-                android:layout_gravity="center_horizontal"
-                android:scaleType="fitCenter"
-                android:src="@mipmap/in"></ImageButton>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="25dp"
+            android:textSize="18sp"
+            android:gravity="center"
+            android:text="入库" />
 
-            <ImageButton
-                android:id="@+id/outBoundButton"
-                android:layout_width="80dp"
-                android:layout_height="match_parent"
-                android:layout_columnWeight="1"
-                android:layout_gravity="center_horizontal"
-                android:scaleType="fitCenter"
-                android:src="@mipmap/out"></ImageButton>
-
-            <ImageButton
-                android:id="@+id/checkBoundButton"
-                android:layout_width="80dp"
-                android:layout_height="match_parent"
-                android:layout_columnWeight="1"
-                android:layout_gravity="center_horizontal"
-                android:scaleType="fitCenter"
-                android:src="@mipmap/check"></ImageButton>
-
-        </GridLayout>
     </LinearLayout>
 
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="3"
+        android:orientation="vertical">
+
+        <ImageButton
+            android:id="@+id/outBoundButton"
+            android:layout_width="match_parent"
+            android:layout_height="75dp"
+            android:background="@android:color/transparent"
+            android:scaleType="fitCenter"
+            android:src="@mipmap/out"></ImageButton>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="25dp"
+            android:textSize="18sp"
+            android:gravity="center"
+            android:text="出库" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="3"
+        android:orientation="vertical">
+
+        <ImageButton
+            android:id="@+id/checkBoundButton"
+            android:layout_width="match_parent"
+            android:layout_height="75dp"
+            android:background="@android:color/transparent"
+            android:scaleType="fitCenter"
+            android:src="@mipmap/check"></ImageButton>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="25dp"
+            android:textSize="18sp"
+            android:gravity="center"
+            android:text="查询" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="3"
+        android:orientation="vertical">
+
+        <ImageButton
+            android:id="@+id/emptyBoundButton"
+            android:layout_width="match_parent"
+            android:layout_height="75dp"
+            android:background="@android:color/transparent"
+            android:scaleType="fitCenter"
+            ></ImageButton>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="20dp"
+            android:gravity="center"
+            android:text="" />
+
+    </LinearLayout>
+    </LinearLayout>
 
 </RelativeLayout>

@@ -20,13 +20,18 @@
         android:theme="@style/Theme.XPPDA"
         tools:targetApi="31">
         <activity
-            android:name=".setting"
+            android:name=".CheckActivity"
+            android:exported="false"
+            android:label="@string/title_activity_check"
+            android:theme="@style/Theme.XPPDA" />
+        <activity
+            android:name=".Setting"
             android:exported="false" />
         <activity
             android:name=".MainAppliction"
             android:exported="false" />
         <activity
-            android:name=".OutboundActivity"
+            android:name=".LoginActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -35,7 +40,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".MainActivity" />
-        <activity android:name=".LoginActivity" />
+        <activity android:name=".OutboundActivity" />
         <activity android:name=".InboundActivity" />
     </application>
 

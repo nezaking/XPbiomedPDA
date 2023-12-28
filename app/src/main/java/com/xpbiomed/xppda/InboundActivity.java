@@ -16,6 +16,8 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.xpbiomed.xppda.model.Feishu;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -42,7 +44,7 @@ public class InboundActivity extends AppCompatActivity {
     private TextView remainingQuantityTextView;
     private TextView totalQuantityTextView;
     private ListView barCodeListView;
-    private static String feishuAuthor = "Bearer u-fRRQ9_MhJbIpVVeELgs7hHghmmHhh4X1ji0040K0aKu4";
+    private static String feishuAuthor = "Bearer " + Feishu.feishuAccessToken;
     //添加数据适配器
     private ArrayAdapter<String> adapter;
     private List<String> barCodeList;
@@ -76,6 +78,7 @@ public class InboundActivity extends AppCompatActivity {
         barCodeListView.setAdapter(adapter);
         // Add your code to handle the Inbound activity
         barcodeEditText.requestFocus();  //程序启动后，默认直接扫码
+        Log.d("FeishuTokenI", Feishu.feishuAccessToken);
         barcodeEditText.setOnKeyListener(new View.OnKeyListener() {
             @Override
             public boolean onKey(View v, int keyCode, KeyEvent event) {
@@ -210,6 +213,17 @@ public class InboundActivity extends AppCompatActivity {
         private boolean parseResponse(String response) throws JSONException {
             JSONObject jsonResponse = new JSONObject(response);
             return jsonResponse.optInt("code") == 0;
+        }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        new InboundActivity.UploadDataTask().execute(barUrlList); //每10条提交一次，如果最后一次不足10条，直接退出即可
+        try {
+            Feishu.requestAccessToken(); //Token两个小时一更新，退出时刷新Token
+        } catch (JSONException e) {
+            throw new RuntimeException(e);
         }
     }
 

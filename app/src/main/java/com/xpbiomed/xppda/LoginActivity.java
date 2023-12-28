@@ -9,6 +9,10 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.xpbiomed.xppda.model.Feishu;
+
+import org.json.JSONException;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -33,6 +37,12 @@ public class LoginActivity extends AppCompatActivity {
             public void onClick(View view) {
                 if (authenticateUser()) {
                     // Authentication successful
+                    //验证通过后更新飞书Token
+                    try {
+                        Feishu.requestAccessToken();
+                    } catch (JSONException e) {
+                        throw new RuntimeException(e);
+                    }
                     Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                     intent.putExtra("username", usernameEditText.getText().toString());
                     startActivity(intent);
